@@ -1,6 +1,8 @@
 IrcParser.js - Parse and replace irc color and style codes
 ============
 
+[![Build Status](https://travis-ci.org/badosu/ircparser.js.png)](https://travis-ci.org/badosu/ircparser.js)
+
 IrcParser is a dead simple library for parsing and replacing irc color and
 style codes.
 
