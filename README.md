@@ -27,6 +27,13 @@ Customizing
   // => 'This is <span style='text-decoration:bold'>bold</span>'
 ```
 
+Testing
+-------
+
+You must have jasmine-node installed, it is available as a npm package.
+
+Just run: `jasmine-node spec`.
+
 Contributing
 ------------
 
