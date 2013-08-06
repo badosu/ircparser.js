@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <script src="ircparser.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="ircparser.min.css" type="text/css"></style>
+  </head>
+  <body>
+  <script>
+
+    // Here is an irc message full of crazy codes
+    var ircHeader = "\x02This\x02 \x16is \x0304the\x03\x16 \x1Firc\x03062\x03html\x1f \x00sandbox\x00";
+
+    var ircParser = new IrcParser();
+    // Custom tag replacement, the $1 is the sanitized input
+    ircParser.styles.underline.replacement = "<span style='text-decoration:underline'>$1</span>";
+
+    // Just pass it to the IrcParser.parse
+    var htmlHeader = ircParser.parse(ircHeader);
+    document.write('<p>' + htmlHeader + '</p>');
+
+    for (var colorName in ircParser.colors) {
+      document.write('<p>');
+      document.write(ircParser.parse("This is color \x03" + ircParser.colors[colorName].code + colorName + "\x03"));
+      document.write('</p>');
+    }
+
+    for (var colorName in ircParser.bgcolors) {
+      document.write('<p>');
+      document.write(ircParser.parse("This is color \x03" + ircParser.bgcolors[colorName].code + colorName + "\x03"));
+      document.write('</p>');
+    }
+
+    for (var styleName in ircParser.styles) {
+      var style = ircParser.styles[styleName];
+      document.write('<p>');
+      document.write(ircParser.parse("This is style " + style.code + styleName + style.code));
+      document.write('</p>');
+    }
+  </script>
+  </body>
+</html>
