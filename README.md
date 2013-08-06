@@ -22,12 +22,22 @@ Usage
 Customizing
 -----------
 
+Use replacement strings.
+
+1. For colors:   $1 is color code, $2 is content
+2. For bgcolors: $1 is bgcolor code, $2 is (fg)color code, $3 is the content
+3. For styles:   $1 is the content
+
+Example:
+
 ```javascript
   ircParser.styles.bold.replacement = "<span style='text-decoration:bold'>$1</span>";
   var result = ircParser.parse('This is \x02bold\x02');
   console.log(result);
   // => 'This is <span style='text-decoration:bold'>bold</span>'
 ```
+
+Use the file `sandbox.html` to tinker with customizations.
 
 Testing
 -------

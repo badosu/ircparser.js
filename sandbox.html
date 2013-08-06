@@ -1,7 +1,7 @@
 <html>
   <head>
-    <script src="ircparser.min.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="ircparser.min.css" type="text/css"></style>
+    <script src="ircparser.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="ircparser.css" type="text/css"></style>
   </head>
   <body>
   <script>
@@ -17,23 +17,29 @@
     var htmlHeader = ircParser.parse(ircHeader);
     document.write('<p>' + htmlHeader + '</p>');
 
-    for (var colorName in ircParser.colors) {
-      document.write('<p>');
-      document.write(ircParser.parse("This is color \x03" + ircParser.colors[colorName].code + colorName + "\x03"));
-      document.write('</p>');
-    }
-
-    for (var colorName in ircParser.bgcolors) {
-      document.write('<p>');
-      document.write(ircParser.parse("This is color \x03" + ircParser.bgcolors[colorName].code + colorName + "\x03"));
-      document.write('</p>');
-    }
-
     for (var styleName in ircParser.styles) {
       var style = ircParser.styles[styleName];
       document.write('<p>');
       document.write(ircParser.parse("This is style " + style.code + styleName + style.code));
       document.write('</p>');
+    }
+
+    var i = 0;
+    for (var colorName in ircParser.colors) {
+      document.write('<p>');
+      var code = ("0"+i).slice(-2);
+      document.write(ircParser.parse("This is color \x03" + code + colorName + "\x03"));
+      document.write('</p>');
+      i++;
+    }
+
+    i = 0;
+    for (var colorName in ircParser.bgcolors) {
+      document.write('<p>');
+      var code = ("0"+i).slice(-2);
+      document.write(ircParser.parse("This is background \x0301," + code + colorName + "\x03"));
+      document.write('</p>');
+      i++;
     }
   </script>
   </body>
