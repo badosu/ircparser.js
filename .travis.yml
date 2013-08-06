@@ -1,4 +1,4 @@
 language: node_js
-script: "jasmine-node spec"
+script: "jasmine-node --verbose spec"
 before_script:
     - "npm i -g jasmine-node"
