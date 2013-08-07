@@ -34,6 +34,30 @@ describe("IrcParser", function() {
         parsed = ircParser.parse("\x1Ftest\x1F");
         expect(parsed).toEqual('<u>test</u>');
       });
+
+      it("can customize the normal replacement string", function() {
+        ircParser.styles.normal.replacement = '|n|$1|n|'
+        parsed = ircParser.parse("\x00test\x00");
+        expect(parsed).toEqual('|n|test|n|');
+      });
+
+      it("can customize the bold replacement string", function() {
+        ircParser.styles.bold.replacement = '|b|$1|b|'
+        parsed = ircParser.parse("\x02test\x02");
+        expect(parsed).toEqual('|b|test|b|');
+      });
+
+      it("can customize the underline replacement string", function() {
+        ircParser.styles.underline.replacement = '|u|$1|u|'
+        parsed = ircParser.parse("\x1ftest\x1f");
+        expect(parsed).toEqual('|u|test|u|');
+      });
+
+      it("can customize the italic replacement string", function() {
+        ircParser.styles.italic.replacement = '|i|$1|i|'
+        parsed = ircParser.parse("\x16test\x16");
+        expect(parsed).toEqual('|i|test|i|');
+      });
     });
 
     describe('color codes', function() {
