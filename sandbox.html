@@ -11,7 +11,7 @@
 
     var ircParser = new IrcParser();
     // Custom tag replacement, the $1 is the sanitized input
-    ircParser.styles.underline.replacement = "<span style='text-decoration:underline'>$1</span>";
+    ircParser.styles.underline.replacement = "<span style='text-decoration:underline'>$2</span>";
 
     // Just pass it to the IrcParser.parse
     var htmlHeader = ircParser.parse(ircHeader);
