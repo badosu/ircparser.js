@@ -238,6 +238,12 @@ describe("IrcParser", function() {
           toEqual('<span class="irc-01">te</span>st');
       });
 
+      it("resets the color before another", function() {
+        parsed = ircParser.parse("\x0301te\x0fs\x0301t\x03");
+        expect(parsed).
+          toEqual('<span class="irc-01">te</span>s<span class="irc-01">t</span>');
+      });
+
       it("resets the bgcolor", function() {
         parsed = ircParser.parse("\x0301,03te\x0fst");
         expect(parsed).

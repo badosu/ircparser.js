@@ -1,6 +1,6 @@
 IrcParser = function() {
   var ircParser = {};
-  var regex = /\x03(\d?\d)(,(\d?\d))?([^\x03]*)((\x03((\d\d?)(,\d\d?)?)?)|(\x0f))/;
+  var regex = /\x03(\d?\d)(,(\d?\d))?([^\x03\x0f]*)((\x03((\d\d?)(,\d\d?)?)?)|(\x0f))/;
 
   ircParser.colors = {
     white:      { code: '00' },
