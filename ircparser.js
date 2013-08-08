@@ -2,12 +2,6 @@ IrcParser = function() {
   var ircParser = {};
   var regex = /\x03(\d?\d)(,(\d?\d))?([^\x03]*)((\x03((\d\d?)(,\d\d?)?)?)|(\x0f))/;
 
-  ircParser.parse = function(irc) {
-    irc = this.replaceStyles(irc);
-    irc = this.replaceColors(irc);
-    return irc;
-  };
-
   ircParser.colors = {
     white:      { code: '00' },
     black:      { code: '01' },
@@ -53,56 +47,52 @@ IrcParser = function() {
   ircParser.bgcolors = {};
   ircParser.colorNames = {};
 
-  ircParser.init = function() {
-    for (var colorName in ircParser.colors) {
-      var color = ircParser.colors[colorName];
+  ircParser.parse = function(irc) {
+    irc = this.replaceStyles(irc);
+    irc = this.replaceColors(irc);
+    return irc;
+  };
 
-      color.replacement = '<span class="irc-$1">$4</span>';
-
-      ircParser.colorNames[color.code] = colorName;
-      ircParser.bgcolors[colorName] = {
-        replacement: '<span class="irc-bg$3">$4</span>'
-      };
+  ircParser.replaceStyles = function(irc) {
+    for (var tokenName in this.styles) {
+      var token = this.styles[tokenName];
+      irc = irc.replace(token.regexp, token.replacement);
     }
+
+    return irc;
   };
 
   ircParser.replaceColors = function(irc) {
     var matches = irc.match(regex);
     while(matches) {
-      var fgcode = ("0" + matches[1]).slice(-2);
+      var fgCode = ("0" + matches[1]).slice(-2);
       var isbg = matches[2];
       var isnstop = matches[7];
-      var nfgcode = matches[8];
-      var isnbg = matches[9];
-      var reset = matches[10];
+      var nextfg = matches[8];
+      var nextbg = matches[9];
 
-      var fgName = ircParser.colorNames[fgcode];
-      var color = ircParser.colors[fgName];
-      var replacement;
+      var color = this.colors[this.colorNames[fgCode]];
+      var replacement = color.replacement;
 
       if (isbg) {
         var bgCode = ("0" + matches[3]).slice(-2);
-        var bgName = ircParser.colorNames[bgCode];
-        var bgColor = ircParser.bgcolors[bgName];
+        var bgColor = this.bgcolors[this.colorNames[bgCode]];
 
-        replacement = '\x03' + fgcode + bgColor.replacement + '\x03';
+        replacement = '\x03' + fgCode + bgColor.replacement + '\x03';
 
         if (matches[3].length == 1) {
           replacement = replacement.replace("$3", "0$3");
         }
 
         if (isnstop) {
-          replacement += nfgcode;
-          replacement += isnbg ? isnbg : ',' + bgCode;
+          replacement += nextfg;
+          replacement += nextbg ? nextbg : ',' + bgCode;
         }
       }
       else if (isnstop) {
-        replacement = color.replacement + '\x03' + nfgcode;
+        replacement = color.replacement + '\x03' + nextfg;
 
-        if (isnbg) replacement += isnbg;
-      }
-      else {
-        replacement = color.replacement;
+        if (nextbg) replacement += nextbg;
       }
 
       if (matches[1].length == 1) {
@@ -114,20 +104,24 @@ IrcParser = function() {
       matches = irc.match(regex);
     }
 
-    if(irc.match(/\x03\d/g)) {
+    if (irc.match(/\x03\d/g)) {
       irc = this.parse(irc + "\x03");
     }
 
     return irc;
   };
 
-  ircParser.replaceStyles = function(irc) {
-    for (var tokenName in ircParser.styles) {
-      var token = ircParser.styles[tokenName];
-      irc = irc.replace(token.regexp, token.replacement);
-    }
+  ircParser.init = function() {
+    for (var colorName in this.colors) {
+      var color = this.colors[colorName];
 
-    return irc;
+      color.replacement = '<span class="irc-$1">$4</span>';
+
+      this.colorNames[color.code] = colorName;
+      this.bgcolors[colorName] = {
+        replacement: '<span class="irc-bg$3">$4</span>'
+      };
+    }
   };
 
   ircParser.init();
