@@ -44,7 +44,7 @@ return irc;
       color.replacement = '<span class="irc-$1">$4</span>';
 
       ircParser.colorNames[color.code] = colorName;
-      ircParser.bgcolors['bg' + colorName] = {
+      ircParser.bgcolors[colorName] = {
         replacement: '<span class="irc-bg$3">$4</span>'
       };
     }
@@ -62,7 +62,6 @@ return irc;
     while(matches) {
       var fgcode = matches[1];
       var isbg = matches[2];
-      var content = matches[4];
       var isnstop = matches[7];
       var nfgcode = matches[8];
       var isnbg = matches[9];
@@ -74,7 +73,7 @@ return irc;
       if (isbg) {
         var bgCode = matches[3];
         var bgName = ircParser.colorNames[bgCode];
-        var bgColor = ircParser.bgcolors['bg' + bgName];
+        var bgColor = ircParser.bgcolors[bgName];
 
         var replacement = '\x03' + fgcode + bgColor.replacement + '\x03';
 

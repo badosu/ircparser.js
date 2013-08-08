@@ -167,6 +167,12 @@ describe("IrcParser", function() {
         parsed = ircParser.parse("\x0306test");
         expect(parsed).toEqual('<span class="irc-06">test</span>');
       });
+
+      it("can customize color replacement", function() {
+        ircParser.colors.blue.replacement = '|b|$4|b|'
+        parsed = ircParser.parse("\x0312test\x03");
+        expect(parsed).toEqual('|b|test|b|');
+      });
     });
 
     describe('background color codes', function() {
@@ -196,20 +202,27 @@ describe("IrcParser", function() {
                   '</span><span class="irc-02"><span class="irc-bg04">to you' +
                   '</span></span>');
       });
+
+      it("can customize bgcolor replacement", function() {
+        ircParser.colors.blue.replacement = '|b|$4|b|'
+        ircParser.bgcolors.green.replacement = '|g$1-$3|$4|g|'
+        parsed = ircParser.parse("\x0312,03test\x03");
+        expect(parsed).toEqual('|b||g12-03|test|g||b|');
+      });
     });
 
     describe('reset code', function() {
       it("resets the color", function() {
         parsed = ircParser.parse("\x0301,03te\x0fst");
         expect(parsed).
-          toEqual('<span class="irc-01">te</span>st');
+          toEqual('<span class="irc-01"><span class="irc-bg03">te</span>' +
+                  '</span>st');
       });
 
       it("resets the bgcolor", function() {
         parsed = ircParser.parse("\x0301te\x0fst");
         expect(parsed).
-          toEqual('<span class="irc-01"><span class="irc-bg01">te</span>' +
-                  '</span>st');
+          toEqual('<span class="irc-01">te</span>st');
       });
     });
   });
