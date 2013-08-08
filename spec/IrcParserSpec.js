@@ -197,5 +197,20 @@ describe("IrcParser", function() {
                   '</span></span>');
       });
     });
+
+    describe('reset code', function() {
+      it("resets the color", function() {
+        parsed = ircParser.parse("\x0301,03te\x0fst");
+        expect(parsed).
+          toEqual('<span class="irc-01">te</span>st');
+      });
+
+      it("resets the bgcolor", function() {
+        parsed = ircParser.parse("\x0301te\x0fst");
+        expect(parsed).
+          toEqual('<span class="irc-01"><span class="irc-bg01">te</span>' +
+                  '</span>st');
+      });
+    });
   });
 });

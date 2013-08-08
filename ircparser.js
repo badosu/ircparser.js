@@ -1,6 +1,6 @@
 IrcParser = function() {
   var ircParser = {};
-  var regex = /\x03([0-9][0-9])(,([0-9][0-9]))?([^\x03]*)\x03(([0-9][0-9])(,[0-9][0-9])?)?/;
+  var regex = /\x03([0-9][0-9])(,([0-9][0-9]))?([^\x03]*)((\x03(([0-9][0-9])(,[0-9][0-9])?)?)|(\x0f))/;
 
   ircParser.parse = function(irc) {
     irc = this.replaceStyles(irc);
@@ -63,9 +63,10 @@ return irc;
       var fgcode = matches[1];
       var isbg = matches[2];
       var content = matches[4];
-      var isnstop = matches[5];
-      var nfgcode = matches[6];
-      var isnbg = matches[7];
+      var isnstop = matches[7];
+      var nfgcode = matches[8];
+      var isnbg = matches[9];
+      var reset = matches[10];
 
       var fgName = ircParser.colorNames[fgcode];
       var color = ircParser.colors[fgName];
