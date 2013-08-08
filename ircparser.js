@@ -25,22 +25,22 @@ IrcParser = function() {
     normal: {
       code: '\x00',
       replacement: '$2',
-      regexp: /(\x00)([^\x00]*)\x00/
+      regexp: /(\x00)([^\x00]*)\x00/g
     },
     bold: {
       code: '\x02',
       replacement: '<strong>$2</strong>',
-      regexp: /(\x02)([^\x02]*)\x02/
+      regexp: /(\x02)([^\x02]*)\x02/g
     },
     italic: {
       code: '\x16',
       replacement: '<em>$2</em>',
-      regexp: /(\x16)([^\x16]*)\x16/
+      regexp: /(\x16)([^\x16]*)\x16/g
     },
     underline: {
       code: '\x1f',
       replacement: '<u>$2</u>',
-      regexp: /(\x1f)([^\x1f]*)\x1f/
+      regexp: /(\x1f)([^\x1f]*)\x1f/g
     }
   };
 

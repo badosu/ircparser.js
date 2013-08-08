@@ -34,6 +34,11 @@ describe("IrcParser", function() {
         parsed = ircParser.parse("\x1Ftest\x1F");
         expect(parsed).toEqual('<u>test</u>');
       });
+
+      it("replaces multiple bold codes", function() {
+        parsed = ircParser.parse("\x02test\x02 \x02me\x02");
+        expect(parsed).toEqual('<strong>test</strong> <strong>me</strong>');
+      });
     });
 
     describe('color codes', function() {
