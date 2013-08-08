@@ -5,7 +5,7 @@ IrcParser = function() {
   ircParser.parse = function(irc) {
     irc = this.replaceStyles(irc);
     irc = this.replaceColors(irc);
-return irc;
+    return irc;
   };
 
   ircParser.colors = {
