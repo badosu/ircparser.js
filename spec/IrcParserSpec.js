@@ -34,30 +34,6 @@ describe("IrcParser", function() {
         parsed = ircParser.parse("\x1Ftest\x1F");
         expect(parsed).toEqual('<u>test</u>');
       });
-
-      it("customizes the normal replacement string", function() {
-        ircParser.styles.normal.replacement = '|n$1|$2|n|'
-        parsed = ircParser.parse("\x00test\x00");
-        expect(parsed).toEqual('|n\x00|test|n|');
-      });
-
-      it("customizes the bold replacement string", function() {
-        ircParser.styles.bold.replacement = '|b$1|$2|b|'
-        parsed = ircParser.parse("\x02test\x02");
-        expect(parsed).toEqual('|b\x02|test|b|');
-      });
-
-      it("customizes the underline replacement string", function() {
-        ircParser.styles.underline.replacement = '|u$1|$2|u|'
-        parsed = ircParser.parse("\x1ftest\x1f");
-        expect(parsed).toEqual('|u\x1f|test|u|');
-      });
-
-      it("customizes the italic replacement string", function() {
-        ircParser.styles.italic.replacement = '|i$1|$2|i|'
-        parsed = ircParser.parse("\x16test\x16");
-        expect(parsed).toEqual('|i\x16|test|i|');
-      });
     });
 
     describe('color codes', function() {
@@ -152,7 +128,7 @@ describe("IrcParser", function() {
                                '<span class="irc-00">st</span>');
       });
 
-      it("replaces black concatenated to white", function() {
+      it("replaces concatenated colors", function() {
         parsed = ircParser.parse("\x0301te\x0300st\x03");
         expect(parsed).toEqual('<span class="irc-01">te</span>' +
                                '<span class="irc-00">st</span>');
@@ -171,12 +147,6 @@ describe("IrcParser", function() {
       it("handles when there is no stop code", function() {
         parsed = ircParser.parse("\x0306test");
         expect(parsed).toEqual('<span class="irc-06">test</span>');
-      });
-
-      it("can customize color replacement", function() {
-        ircParser.colors.blue.replacement = '|b|$4|b|'
-        parsed = ircParser.parse("\x0312test\x03");
-        expect(parsed).toEqual('|b|test|b|');
       });
     });
 
@@ -206,7 +176,7 @@ describe("IrcParser", function() {
                   '<span class="irc-02"><span class="irc-bg03">to you</span></span>');
       });
 
-      it("concatenates background", function() {
+      it("replaces concatenated backgrounds", function() {
         parsed = ircParser.parse("\x0301,03Hello \x0302,04to you\x03");
         expect(parsed).
           toEqual('<span class="irc-01"><span class="irc-bg03">Hello </span>' +
@@ -214,34 +184,65 @@ describe("IrcParser", function() {
                   '</span></span>');
       });
 
-      it("concatenates 1-digit backgrounds", function() {
+      it("replaces concatenated 1-digit backgrounds", function() {
         parsed = ircParser.parse("\x031,3Hello \x032,4to you\x03");
         expect(parsed).
           toEqual('<span class="irc-01"><span class="irc-bg03">Hello </span>' +
                   '</span><span class="irc-02"><span class="irc-bg04">to you' +
                   '</span></span>');
       });
+    });
+
+    describe('customization', function() {
+      it("customizes color replacement", function() {
+        ircParser.colors.blue.replacement = '|b|$4|b|'
+        parsed = ircParser.parse("\x0312test\x03");
+        expect(parsed).toEqual('|b|test|b|');
+      });
 
       it("customizes bgcolor replacement", function() {
-        ircParser.colors.blue.replacement = '|b|$4|b|'
         ircParser.bgcolors.green.replacement = '|g$1-$3|$4|g|'
         parsed = ircParser.parse("\x0312,03test\x03");
-        expect(parsed).toEqual('|b||g12-03|test|g||b|');
+        expect(parsed).toEqual('<span class="irc-12">|g12-03|test|g|</span>');
+      });
+
+      it("customizes normal replacement", function() {
+        ircParser.styles.normal.replacement = '|n$1|$2|n|'
+        parsed = ircParser.parse("\x00test\x00");
+        expect(parsed).toEqual('|n\x00|test|n|');
+      });
+
+      it("customizes bold replacement", function() {
+        ircParser.styles.bold.replacement = '|b$1|$2|b|'
+        parsed = ircParser.parse("\x02test\x02");
+        expect(parsed).toEqual('|b\x02|test|b|');
+      });
+
+      it("customizes underline replacement", function() {
+        ircParser.styles.underline.replacement = '|u$1|$2|u|'
+        parsed = ircParser.parse("\x1ftest\x1f");
+        expect(parsed).toEqual('|u\x1f|test|u|');
+      });
+
+      it("customizes italic replacement", function() {
+        ircParser.styles.italic.replacement = '|i$1|$2|i|'
+        parsed = ircParser.parse("\x16test\x16");
+        expect(parsed).toEqual('|i\x16|test|i|');
       });
     });
 
     describe('reset code', function() {
       it("resets the color", function() {
+        parsed = ircParser.parse("\x0301te\x0fst");
+        expect(parsed).
+          toEqual('<span class="irc-01">te</span>st');
+      });
+
+      it("resets the bgcolor", function() {
         parsed = ircParser.parse("\x0301,03te\x0fst");
         expect(parsed).
           toEqual('<span class="irc-01"><span class="irc-bg03">te</span>' +
                   '</span>st');
-      });
-
-      it("resets the bgcolor", function() {
-        parsed = ircParser.parse("\x0301te\x0fst");
-        expect(parsed).
-          toEqual('<span class="irc-01">te</span>st');
       });
     });
   });
