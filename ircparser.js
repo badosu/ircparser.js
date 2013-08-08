@@ -98,6 +98,10 @@ return irc;
       matches = irc.match(regex);
     }
 
+    if(irc.match(/\x03/g)) {
+      irc = this.parse(irc + "\x03");
+    }
+
     return irc;
   };
 
