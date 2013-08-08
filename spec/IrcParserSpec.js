@@ -36,27 +36,27 @@ describe("IrcParser", function() {
       });
 
       it("customizes the normal replacement string", function() {
-        ircParser.styles.normal.replacement = '|n|$1|n|'
+        ircParser.styles.normal.replacement = '|n$1|$2|n|'
         parsed = ircParser.parse("\x00test\x00");
-        expect(parsed).toEqual('|n|test|n|');
+        expect(parsed).toEqual('|n\x00|test|n|');
       });
 
       it("customizes the bold replacement string", function() {
-        ircParser.styles.bold.replacement = '|b|$1|b|'
+        ircParser.styles.bold.replacement = '|b$1|$2|b|'
         parsed = ircParser.parse("\x02test\x02");
-        expect(parsed).toEqual('|b|test|b|');
+        expect(parsed).toEqual('|b\x02|test|b|');
       });
 
       it("customizes the underline replacement string", function() {
-        ircParser.styles.underline.replacement = '|u|$1|u|'
+        ircParser.styles.underline.replacement = '|u$1|$2|u|'
         parsed = ircParser.parse("\x1ftest\x1f");
-        expect(parsed).toEqual('|u|test|u|');
+        expect(parsed).toEqual('|u\x1f|test|u|');
       });
 
       it("customizes the italic replacement string", function() {
-        ircParser.styles.italic.replacement = '|i|$1|i|'
+        ircParser.styles.italic.replacement = '|i$1|$2|i|'
         parsed = ircParser.parse("\x16test\x16");
-        expect(parsed).toEqual('|i|test|i|');
+        expect(parsed).toEqual('|i\x16|test|i|');
       });
     });
 

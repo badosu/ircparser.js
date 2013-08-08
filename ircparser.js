@@ -28,10 +28,26 @@ IrcParser = function() {
   };
 
   ircParser.styles = {
-    normal:    { code: '\x00', replacement: '$1'                  },
-    bold:      { code: '\x02', replacement: '<strong>$1</strong>' },
-    italic:    { code: '\x16', replacement: '<em>$1</em>'         },
-    underline: { code: '\x1F', replacement: '<u>$1</u>'           }
+    normal: {
+      code: '\x00',
+      replacement: '$2',
+      regexp: /(\x00)([^\x00]*)\x00/
+    },
+    bold: {
+      code: '\x02',
+      replacement: '<strong>$2</strong>',
+      regexp: /(\x02)([^\x02]*)\x02/
+    },
+    italic: {
+      code: '\x16',
+      replacement: '<em>$2</em>',
+      regexp: /(\x16)([^\x16]*)\x16/
+    },
+    underline: {
+      code: '\x1f',
+      replacement: '<u>$2</u>',
+      regexp: /(\x1f)([^\x1f]*)\x1f/
+    }
   };
 
   ircParser.bgcolors = {};
@@ -47,13 +63,6 @@ IrcParser = function() {
       ircParser.bgcolors[colorName] = {
         replacement: '<span class="irc-bg$3">$4</span>'
       };
-    }
-
-    for (var styleName in ircParser.styles) {
-      var style = ircParser.styles[styleName],
-          exp = style.code + '([^' + style.code + ']*)' + style.code;
-
-      style.regexp = new RegExp(exp, 'g');
     }
   };
 

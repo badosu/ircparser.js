@@ -24,16 +24,16 @@ Customizing
 
 Use replacement strings.
 
-- styles - $1: content
+- styles - $1: style code, $2: content
 - colors - $1: color code, $3: bg code, $4: content
 
 Example:
 
 ```javascript
-  ircParser.styles.bold.replacement = "<span style='text-decoration:bold'>$1</span>";
+  ircParser.styles.bold.replacement = "<b>$2</b>";
   var result = ircParser.parse('This is \x02bold\x02');
   console.log(result);
-  // => 'This is <span style='text-decoration:bold'>bold</span>'
+  // => 'This is <b>bold</b>'
 ```
 
 Use the file `sandbox.html` to tinker with customizations.
