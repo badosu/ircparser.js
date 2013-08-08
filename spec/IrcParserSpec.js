@@ -141,14 +141,16 @@ describe("IrcParser", function() {
         expect(parsed).toEqual('<span class="irc-15">test</span>');
       });
 
-      it("replaces black and white code", function() {
+      it("replaces black, followed by white code", function() {
         parsed = ircParser.parse("\x0301te\x03\x0300st\x03");
-        expect(parsed).toEqual('<span class="irc-01">te</span><span class="irc-00">st</span>');
+        expect(parsed).toEqual('<span class="irc-01">te</span>' +
+                               '<span class="irc-00">st</span>');
       });
 
-      it("replaces black, followed by white code", function() {
+      it("replaces black interpolating to white code", function() {
         parsed = ircParser.parse("\x0301te\x0300st\x03");
-        expect(parsed).toEqual('<span class="irc-01">te</span><span class="irc-00">st</span>');
+        expect(parsed).toEqual('<span class="irc-01">te</span>' +
+                               '<span class="irc-00">st</span>');
       });
 
       it("erases color codes from empty messages", function() {
@@ -165,21 +167,30 @@ describe("IrcParser", function() {
     describe('background color codes', function() {
       it("erases color codes from empty messages", function() {
         parsed = ircParser.parse("\x0303,04\x03");
-        expect(parsed).toEqual('<span class="irc-bg04"><span class="irc-03"></span></span>');
+        expect(parsed).toEqual('<span class="irc-03">' +
+                               '<span class="irc-bg04"></span></span>');
       });
 
       it("replaces green with bgred code", function() {
         parsed = ircParser.parse("\x0303,04test\x03");
-        expect(parsed).toEqual('<span class="irc-bg04"><span class="irc-03">test</span></span>');
+        expect(parsed).toEqual('<span class="irc-03">' +
+                               '<span class="irc-bg04">test</span></span>');
       });
 
-      xit("handles background inheritance", function() {
-        parsed = ircParser.parse("\x0300,01Hello \x0301to you\x03");
+      xit("handles background interpolation", function() {
+        parsed = ircParser.parse("\x0301,03Hello \x0302,04to you\x03");
         expect(parsed).
-          toEqual('<span class="irc-bg01"><span class="irc-00">Hello </span>' +
-                  '<span class="irc01">to you</span></span>');
+          toEqual('<span class="irc-bg03"><span class="irc-01">Hello </span>' +
+                  '</span><span class="irc-bg04"><span class="irc02">to you' +
+                  '</span></span>');
       });
 
+      it("handles background inheritance", function() {
+        parsed = ircParser.parse("\x0301,03Hello \x0302to you\x03");
+        expect(parsed).
+          toEqual('<span class="irc-01"><span class="irc-bg03">Hello </span></span>' +
+                  '<span class="irc-02"><span class="irc-bg03">to you</span></span>');
+      });
     });
   });
 });

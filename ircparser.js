@@ -1,14 +1,11 @@
 IrcParser = function() {
   var ircParser = {};
-  var bgregex = /\x03([0-9][0-9]),([0-9][0-9])([^\x03]*)\x03([0-9][0-9](,)?)?/;
-  var fgregex = /\x03([0-9][0-9])([^\x03]*)\x03([0-9][0-9])?/;
+  var regex = /\x03([0-9][0-9])(,([0-9][0-9]))?([^\x03]*)\x03(([0-9][0-9])(,[0-9][0-9])?)?/;
 
   ircParser.parse = function(irc) {
     irc = this.replaceStyles(irc);
-    irc = this.replaceBGs(irc);
-    irc = this.replaceFGs(irc);
-
-    return irc;
+    irc = this.replaceColors(irc);
+return irc;
   };
 
   ircParser.colors = {
@@ -44,11 +41,11 @@ IrcParser = function() {
     for (var colorName in ircParser.colors) {
       var color = ircParser.colors[colorName];
 
-      color.replacement = '<span class="irc-$1">$2</span>';
+      color.replacement = '<span class="irc-$1">$4</span>';
 
       ircParser.colorNames[color.code] = colorName;
       ircParser.bgcolors['bg' + colorName] = {
-        replacement: '<span class="irc-bg$2">$3</span>'
+        replacement: '<span class="irc-bg$3">$4</span>'
       };
     }
 
@@ -60,58 +57,49 @@ IrcParser = function() {
     }
   };
 
-  ircParser.replaceFGs = function(irc) {
-    var matches = irc.match(fgregex);
+  ircParser.replaceColors = function(irc) {
+    var matches = irc.match(regex);
     while(matches) {
       var fgcode = matches[1];
-      var nfgcode = matches[3];
+      var isbg = matches[2];
+      var content = matches[4];
+      var isnstop = matches[5];
+      var nfgcode = matches[6];
+      var isnbg = matches[7];
 
-      var fgcolor = ircParser.colorNames[fgcode];
-      var color = ircParser.colors[fgcolor];
+      var fgName = ircParser.colorNames[fgcode];
+      var color = ircParser.colors[fgName];
 
-      if (nfgcode) {
-        irc = irc.replace(fgregex, color.replacement + '\x03' + nfgcode);
+      if (isbg) {
+        var bgCode = matches[3];
+        var bgName = ircParser.colorNames[bgCode];
+        var bgColor = ircParser.bgcolors['bg' + bgName];
+
+        var replacement = '\x03' + fgcode + bgColor.replacement + '\x03';
+
+        if (isnstop) {
+          replacement += nfgcode;
+          if (!isnbg) replacement += ',' + bgCode;
+        }
+
+        console.log(isnbg);
+
+        irc = irc.replace(regex, replacement);
+      }
+      else if (isnstop) {
+        replacement = color.replacement + '\x03' + nfgcode;
+
+        if (isnbg) replacement += ',' + bgCode;
+
+        irc = irc.replace(regex, replacement);
       }
       else {
-        irc = irc.replace(fgregex, color.replacement);
+        irc = irc.replace(regex, color.replacement);
       }
 
-      matches = irc.match(fgregex);
-    }
+      console.log(irc);
 
-    return irc;
-  };
-
-  ircParser.replaceBGs = function(irc) {
-    var matches = irc.match(bgregex);
-    while(matches) {
-      var fgcode = matches[1];
-      var bgcode = matches[2];
-      var nfgcode = matches[4];
-      var nisbg = matches[5];
-
-      var fgcolorName = ircParser.colorNames[fgcode];
-      var color = ircParser.colors[fgcolorName];
-
-      var bgcolorName = ircParser.colorNames[fgcode];
-      var bgcolor = ircParser.bgcolors['bg'+bgcolorName];
-
-      var replacement;
-
-      if (nisbg) {
-        replacement = bgcolor.replacement;
-      }
-      else if (nfgcode) {
-        console.log('OHAI');
-        replacement = bgcolor.replacement.replace('$3','\x03'+fgcode+'$3\x03'+nfgcode);
-      }
-      else {
-        replacement = bgcolor.replacement.replace('$3','\x03'+fgcode+'$3\x03');
-      }
-
-      irc = irc.replace(bgregex, replacement);
-
-      matches = irc.match(bgregex);
+      matches = irc.match(regex);
     }
 
     return irc;
