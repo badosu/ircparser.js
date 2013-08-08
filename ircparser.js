@@ -79,25 +79,21 @@ return irc;
 
         if (isnstop) {
           replacement += nfgcode;
-          if (!isnbg) replacement += ',' + bgCode;
+          replacement += isnbg ? isnbg : ',' + bgCode;
         }
-
-        console.log(isnbg);
 
         irc = irc.replace(regex, replacement);
       }
       else if (isnstop) {
         replacement = color.replacement + '\x03' + nfgcode;
 
-        if (isnbg) replacement += ',' + bgCode;
+        if (isnbg) replacement += isnbg;
 
         irc = irc.replace(regex, replacement);
       }
       else {
         irc = irc.replace(regex, color.replacement);
       }
-
-      console.log(irc);
 
       matches = irc.match(regex);
     }

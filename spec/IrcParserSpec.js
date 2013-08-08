@@ -177,19 +177,19 @@ describe("IrcParser", function() {
                                '<span class="irc-bg04">test</span></span>');
       });
 
-      xit("handles background interpolation", function() {
-        parsed = ircParser.parse("\x0301,03Hello \x0302,04to you\x03");
-        expect(parsed).
-          toEqual('<span class="irc-bg03"><span class="irc-01">Hello </span>' +
-                  '</span><span class="irc-bg04"><span class="irc02">to you' +
-                  '</span></span>');
-      });
-
       it("handles background inheritance", function() {
         parsed = ircParser.parse("\x0301,03Hello \x0302to you\x03");
         expect(parsed).
           toEqual('<span class="irc-01"><span class="irc-bg03">Hello </span></span>' +
                   '<span class="irc-02"><span class="irc-bg03">to you</span></span>');
+      });
+
+      it("handles background concatenation", function() {
+        parsed = ircParser.parse("\x0301,03Hello \x0302,04to you\x03");
+        expect(parsed).
+          toEqual('<span class="irc-bg03"><span class="irc-01">Hello </span>' +
+                  '</span><span class="irc-02"><span class="ircbg04">to you' +
+                  '</span></span>');
       });
     });
   });
