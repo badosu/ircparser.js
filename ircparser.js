@@ -1,6 +1,6 @@
 IrcParser = function() {
   var ircParser = {};
-  var regex = /\x03([0-9][0-9])(,([0-9][0-9]))?([^\x03]*)((\x03(([0-9][0-9])(,[0-9][0-9])?)?)|(\x0f))/;
+  var regex = /\x03(\d?\d)(,(\d?\d))?([^\x03]*)((\x03((\d\d?)(,\d\d?)?)?)|(\x0f))/;
 
   ircParser.parse = function(irc) {
     irc = this.replaceStyles(irc);
@@ -60,7 +60,7 @@ return irc;
   ircParser.replaceColors = function(irc) {
     var matches = irc.match(regex);
     while(matches) {
-      var fgcode = matches[1];
+      var fgcode = ("0" + matches[1]).slice(-2);
       var isbg = matches[2];
       var isnstop = matches[7];
       var nfgcode = matches[8];
@@ -69,36 +69,43 @@ return irc;
 
       var fgName = ircParser.colorNames[fgcode];
       var color = ircParser.colors[fgName];
+      var replacement;
 
       if (isbg) {
-        var bgCode = matches[3];
+        var bgCode = ("0" + matches[3]).slice(-2);
         var bgName = ircParser.colorNames[bgCode];
         var bgColor = ircParser.bgcolors[bgName];
 
-        var replacement = '\x03' + fgcode + bgColor.replacement + '\x03';
+        replacement = '\x03' + fgcode + bgColor.replacement + '\x03';
+
+        if (matches[3].length == 1) {
+          replacement = replacement.replace("$3", "0$3");
+        }
 
         if (isnstop) {
           replacement += nfgcode;
           replacement += isnbg ? isnbg : ',' + bgCode;
         }
-
-        irc = irc.replace(regex, replacement);
       }
       else if (isnstop) {
         replacement = color.replacement + '\x03' + nfgcode;
 
         if (isnbg) replacement += isnbg;
-
-        irc = irc.replace(regex, replacement);
       }
       else {
-        irc = irc.replace(regex, color.replacement);
+        replacement = color.replacement;
       }
+
+      if (matches[1].length == 1) {
+        replacement = replacement.replace("$1", "0$1");
+      }
+
+      irc = irc.replace(regex, replacement);
 
       matches = irc.match(regex);
     }
 
-    if(irc.match(/\x03/g)) {
+    if(irc.match(/\x03\d/g)) {
       irc = this.parse(irc + "\x03");
     }
 
